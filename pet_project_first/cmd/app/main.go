@@ -11,7 +11,7 @@ import (
 
 func main() {
 	database.InitDB()
-	database.DB.AutoMigrate(&taskService.Task{})
+	// database.DB.AutoMigrate(&taskService.Task{}) - без makefile
 
 	repo := taskService.NewTaskRepository(database.DB)
 	service := taskService.NewService(repo)
