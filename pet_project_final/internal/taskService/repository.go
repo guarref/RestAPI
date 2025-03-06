@@ -10,6 +10,8 @@ type TaskRepository interface {
 	GetAllTasks() ([]Task, error)
 	// UpdateTaskByID - Передаем id и Task, возвращаем обновленный Task
 	// и ошибку
+	GetTasksUserId(user_id uint) ([]Task, error)
+	// получаем задачи для конкретного user_id
 	UpdateTaskByID(id uint64, newtask Task) (Task, error)
 	// DeleteTaskByID - Передаем id для удаления, возвращаем только ошибку
 	DeleteTaskByID(id uint64) error
@@ -35,6 +37,12 @@ func (r *taskRepository) CreateTask(task Task) (Task, error) {
 func (r *taskRepository) GetAllTasks() ([]Task, error) {
 	var tasks []Task
 	err := r.db.Find(&tasks).Error
+	return tasks, err
+}
+
+func (r *taskRepository) GetTasksUserId(user_id uint) ([]Task, error) {
+	var tasks []Task
+	err := r.db.Where("user_id = ?", user_id).Find(&tasks).Error
 	return tasks, err
 }
 

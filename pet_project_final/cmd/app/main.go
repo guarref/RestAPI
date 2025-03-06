@@ -22,12 +22,12 @@ func main() {
 
 	tasksRepo := taskService.NewTaskRepository(database.DB)
 	tasksService := taskService.NewService(tasksRepo)
-	tasksHandler := handlers.NewHandler(tasksService)
 
 	usersRepo := userService.NewUserRepository(database.DB)
-	usersService := userService.NewUserService(usersRepo)
+	usersService := userService.NewUserService(usersRepo, tasksRepo)
 	usersHandler := handlers.NewUserHandler(usersService)
 
+	tasksHandler := handlers.NewHandler(tasksService, usersService)
 	// Инициализируем echo
 	e := echo.New()
 

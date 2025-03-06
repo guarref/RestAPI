@@ -3,19 +3,45 @@ package handlers
 import (
 	"context"
 	"pet_project_final/internal/taskService" // Импортируем наш сервис
+	"pet_project_final/internal/userService"
 	"pet_project_final/internal/web/tasks"
 )
 
 type Handler struct {
-	Service *taskService.TaskService
+	Service  *taskService.TaskService
+	UService *userService.UserService
 }
 
 // Нужна для создания структуры Handler на этапе инициализации приложения
 
-func NewHandler(service *taskService.TaskService) *Handler {
+func NewHandler(service *taskService.TaskService, userservice *userService.UserService) *Handler {
 	return &Handler{
-		Service: service,
+		Service:  service,
+		UService: userservice,
 	}
+}
+
+// GetTasksUserId implements tasks.StrictServerInterface.
+func (h *Handler) GetTasksUserId(ctx context.Context, request tasks.GetTasksUserIdRequestObject) (tasks.GetTasksUserIdResponseObject, error) {
+
+	alltasks, err := h.UService.GetTasksUserId(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	response := tasks.GetTasksUserId200JSONResponse{}
+
+	for _, tsk := range alltasks {
+		task := tasks.Task{
+			Id:     &tsk.ID,
+			Text:   &tsk.Text,
+			IsDone: &tsk.IsDone,
+			UserId: &tsk.UserID,
+		}
+		response = append(response, task)
+	}
+
+	return response, nil
 }
 
 func (h *Handler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error) {
@@ -35,6 +61,7 @@ func (h *Handler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject) (ta
 			Id:     &tsk.ID,
 			Text:   &tsk.Text,
 			IsDone: &tsk.IsDone,
+			UserId: &tsk.UserID,
 		}
 		response = append(response, task)
 	}
@@ -50,6 +77,7 @@ func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObj
 	taskToCreate := taskService.Task{
 		Text:   *taskRequest.Text,
 		IsDone: *taskRequest.IsDone,
+		UserID: *taskRequest.UserId,
 	}
 	createdTask, err := h.Service.CreateTask(taskToCreate)
 
@@ -61,6 +89,7 @@ func (h *Handler) PostTasks(_ context.Context, request tasks.PostTasksRequestObj
 		Id:     &createdTask.ID,
 		Text:   &createdTask.Text,
 		IsDone: &createdTask.IsDone,
+		UserId: &createdTask.UserID,
 	}
 	// Просто возвращаем респонс!
 	return response, nil
@@ -74,6 +103,7 @@ func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRe
 	taskToUpdate := taskService.Task{
 		Text:   *request.Body.Text,
 		IsDone: *request.Body.IsDone,
+		UserID: *request.Body.UserId,
 	}
 	// taskToUpdate := taskService.Task{}
 
@@ -93,6 +123,7 @@ func (h *Handler) PatchTasksId(ctx context.Context, request tasks.PatchTasksIdRe
 		Id:     &patchedTask.ID,
 		Text:   &patchedTask.Text,
 		IsDone: &patchedTask.IsDone,
+		UserId: &patchedTask.UserID,
 	}
 	// Просто возвращаем респонс!
 	return response, nil

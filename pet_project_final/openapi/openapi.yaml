@@ -18,9 +18,16 @@ paths:
                 items:
                   $ref: '#/components/schemas/Task'
     post:
-      summary: Create a new task
+      summary: Create a new task OR filter by userID
       tags:
         - tasks
+      parameters:
+        - name: id
+          in: query
+          required: false
+          schema:
+            type: integer
+            format: uint
       requestBody:
         description: The task to create
         required: true
@@ -35,6 +42,29 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Task'
+        '404':
+          description: User not found
+  /tasks/{user_id}:
+    get:
+      summary: Get all tasks by user_id
+      tags:
+        - tasks
+      parameters:
+        - name: user_id
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: uint
+      responses:
+        '200':
+          description: A list of tasks for User by user_id
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
   /tasks/{id}:
     patch:
       summary: Patch task by id
@@ -163,6 +193,9 @@ components:
           type: string
         is_done:
           type: boolean
+        user_id:
+          type: integer
+          format: uint
     User: 
       type: object
       properties:

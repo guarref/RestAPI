@@ -9,6 +9,10 @@ func NewService(repo TaskRepository) *TaskService {
 }
 
 func (s *TaskService) CreateTask(task Task) (Task, error) {
+	_, err := s.repo.GetTasksUserId(task.ID)
+	if err != nil {
+		return Task{}, nil
+	}
 	return s.repo.CreateTask(task)
 }
 
