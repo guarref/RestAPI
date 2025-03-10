@@ -10,6 +10,28 @@ type UserHandler struct {
 	Service *userService.UserService
 }
 
+// GetUsersUserIdTasks implements users.StrictServerInterface.
+func (u *UserHandler) GetUsersUserIdTasks(ctx context.Context, request users.GetUsersUserIdTasksRequestObject) (users.GetUsersUserIdTasksResponseObject, error) {
+	alltasks, err := u.Service.GetTasksUserId(request.UserId)
+	if err != nil {
+		return nil, err
+	}
+
+	response := users.GetUsersUserIdTasks200JSONResponse{}
+
+	for _, tsk := range alltasks {
+		task := users.Task{
+			Id:     &tsk.ID,
+			Text:   &tsk.Text,
+			IsDone: &tsk.IsDone,
+			UserId: &tsk.UserID,
+		}
+		response = append(response, task)
+	}
+
+	return response, nil
+}
+
 // DeleteUsersId implements users.StrictServerInterface.
 func (u *UserHandler) DeleteUsersId(ctx context.Context, request users.DeleteUsersIdRequestObject) (users.DeleteUsersIdResponseObject, error) {
 

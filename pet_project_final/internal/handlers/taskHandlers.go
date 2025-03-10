@@ -3,45 +3,19 @@ package handlers
 import (
 	"context"
 	"pet_project_final/internal/taskService" // Импортируем наш сервис
-	"pet_project_final/internal/userService"
 	"pet_project_final/internal/web/tasks"
 )
 
 type Handler struct {
 	Service  *taskService.TaskService
-	UService *userService.UserService
 }
 
 // Нужна для создания структуры Handler на этапе инициализации приложения
 
-func NewHandler(service *taskService.TaskService, userservice *userService.UserService) *Handler {
+func NewHandler(service *taskService.TaskService) *Handler {
 	return &Handler{
 		Service:  service,
-		UService: userservice,
 	}
-}
-
-// GetTasksUserId implements tasks.StrictServerInterface.
-func (h *Handler) GetTasksUserId(ctx context.Context, request tasks.GetTasksUserIdRequestObject) (tasks.GetTasksUserIdResponseObject, error) {
-
-	alltasks, err := h.UService.GetTasksUserId(request.UserId)
-	if err != nil {
-		return nil, err
-	}
-
-	response := tasks.GetTasksUserId200JSONResponse{}
-
-	for _, tsk := range alltasks {
-		task := tasks.Task{
-			Id:     &tsk.ID,
-			Text:   &tsk.Text,
-			IsDone: &tsk.IsDone,
-			UserId: &tsk.UserID,
-		}
-		response = append(response, task)
-	}
-
-	return response, nil
 }
 
 func (h *Handler) GetTasks(_ context.Context, _ tasks.GetTasksRequestObject) (tasks.GetTasksResponseObject, error) {

@@ -1,6 +1,10 @@
 package taskService
 
-import "gorm.io/gorm"
+import (
+	"fmt"
+
+	"gorm.io/gorm"
+)
 
 type TaskRepository interface {
 	// CreateTask - Передаем в функцию task типа Task из orm.go
@@ -51,6 +55,11 @@ func (r *taskRepository) UpdateTaskByID(id uint64, newtask Task) (Task, error) {
 	result := r.db.First(&oldtask, id)
 	if result.Error != nil {
 		return Task{}, result.Error
+	}
+
+	// Проверяем, что user_id остается неизменным
+	if newtask.UserID != 0 && newtask.UserID != oldtask.UserID {
+		return Task{}, fmt.Errorf("user_id cannot be changed")
 	}
 
 	// Обновляем только указанные поля
