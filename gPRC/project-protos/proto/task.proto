@@ -1,0 +1,42 @@
+syntax = "proto3";
+package task;
+import "google/protobuf/empty.proto";
+option go_package = "github.com/guarref/project-protos/proto/task";
+
+// Сущность задача
+message Task {
+  uint32 id      = 1;
+  string title   = 2;
+}
+
+message CreateTaskRequest {
+  string title = 1;
+}
+message CreateTaskResponse {
+  Task task = 1;
+}
+
+// запрос на изменение
+message UpdateTaskRequest {
+    uint32 id = 1;
+    string title = 2; // проверить на сервере
+}
+message UpdateTaskResponse {
+    Task task = 1;
+}
+
+// запрос на удаление, а он нам и не нужен наверное
+
+// запрос на лист
+message ListTasksRequest {}
+message ListTasksResponse {
+    repeated Task tasks = 1;
+}
+
+service TaskService {
+  rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse);
+  rpc GetTask    (Task)              returns (Task);
+  rpc UpdateTask (UpdateTaskRequest) returns (UpdateTaskResponse);
+  rpc DeleteTask (Task)              returns (google.protobuf.Empty);
+  rpc ListTasks  (ListTasksRequest)  returns (ListTasksResponse);
+}
