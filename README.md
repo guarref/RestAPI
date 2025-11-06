@@ -9,12 +9,12 @@
 4)Логирование и обработка ошибок
 
 Технологии:
-1) Go (Golang, v1.22+)
-2) Echo (или стандартная библиотека net/http) — веб-фреймворк
-3) GORM — ORM
-4) Validator — валидация (github.com/go-playground/validator)
-5) PostgreSQL - СУБД
-6) go mod — управление зависимостями
+1)Go (Golang, v1.22+)
+2)Echo (или стандартная библиотека net/http) — веб-фреймворк
+3)GORM — ORM
+4)Validator — валидация (github.com/go-playground/validator)
+5)PostgreSQL - СУБД
+6)go mod — управление зависимостями
 
 Структура проекта
 RestAPI/pet_project_final/
